@@ -29,22 +29,25 @@ import { Rating, Published, Price } from "./EcommerceProductCol";
 import { productsData } from "../../../common/data";
 
 //Import actions
-import { getProducts as onGetProducts, deleteProducts } from "../../../slices/thunks";
+import {
+  getProducts as onGetProducts,
+  deleteProducts,
+} from "../../../slices/thunks";
 import { isEmpty } from "lodash";
 import Select from "react-select";
 
 //redux
 import { useSelector, useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
-import { toast ,ToastContainer } from 'react-toastify';
+import { toast, ToastContainer } from "react-toastify";
 import { createSelector } from "reselect";
 
 const SingleOptions = [
-  { value: 'Watches', label: 'Watches' },
-  { value: 'Headset', label: 'Headset' },
-  { value: 'Sweatshirt', label: 'Sweatshirt' },
-  { value: '20% off', label: '20% off' },
-  { value: '4 star', label: '4 star' },
+  { value: "Watches", label: "Watches" },
+  { value: "Headset", label: "Headset" },
+  { value: "Sweatshirt", label: "Sweatshirt" },
+  { value: "20% off", label: "20% off" },
+  { value: "4 star", label: "4 star" },
 ];
 
 const EcommerceProducts = (props) => {
@@ -52,10 +55,10 @@ const EcommerceProducts = (props) => {
 
   const selectecomproductData = createSelector(
     (state) => state.Ecommerce.products,
-    (products) => products
+    (products) => products,
   );
-// Inside your component
-const products = useSelector(selectecomproductData);
+  // Inside your component
+  const products = useSelector(selectecomproductData);
 
   const [productList, setProductList] = useState([]);
   const [activeTab, setActiveTab] = useState("1");
@@ -85,23 +88,25 @@ const products = useSelector(selectecomproductData);
       setActiveTab(tab);
       let filteredProducts = products;
       if (type !== "all") {
-        filteredProducts = products.filter((product) => product.status === type);
+        filteredProducts = products.filter(
+          (product) => product.status === type,
+        );
       }
       setProductList(filteredProducts);
     }
   };
 
   useEffect(() => {
-    onUpdate([0, 2000])
-  }, [])
+    onUpdate([0, 2000]);
+  }, []);
 
   const onUpdate = (value) => {
     setProductList(
       productsData.filter(
         (product) => product.price >= value[0] && product.price <= value[1],
-        document.getElementById("minCost").value = value[0],
-        document.getElementById("maxCost").value = value[1],
-      )
+        (document.getElementById("minCost").value = value[0]),
+        (document.getElementById("maxCost").value = value[1]),
+      ),
     );
   };
 
@@ -110,7 +115,9 @@ const products = useSelector(selectecomproductData);
   const categories = (category) => {
     let filteredProducts = products;
     if (category !== "all") {
-      filteredProducts = products.filter((product) => product.category === category);
+      filteredProducts = products.filter(
+        (product) => product.category === category,
+      );
     }
     setProductList(filteredProducts);
     setCate(category);
@@ -120,8 +127,8 @@ const products = useSelector(selectecomproductData);
   /*
   on change rating checkbox method
   */
-  const onChangeRating = value => {
-    setProductList(productsData.filter(product => product.rating >= value));
+  const onChangeRating = (value) => {
+    setProductList(productsData.filter((product) => product.rating >= value));
 
     var modifiedRating = [...ratingvalues];
     modifiedRating.push(value);
@@ -130,7 +137,7 @@ const products = useSelector(selectecomproductData);
 
   const onUncheckMark = (value) => {
     var modifiedRating = [...ratingvalues];
-    const modifiedData = (modifiedRating || []).filter(x => x !== value);
+    const modifiedData = (modifiedRating || []).filter((x) => x !== value);
     /*
     find min values
     */
@@ -139,7 +146,7 @@ const products = useSelector(selectecomproductData);
       var minValue = Math.min(...modifiedData);
       if (minValue && minValue !== Infinity) {
         filteredProducts = productsData.filter(
-          product => product.rating >= minValue
+          (product) => product.rating >= minValue,
         );
         setRatingvalues(modifiedData);
       }
@@ -172,9 +179,9 @@ const products = useSelector(selectecomproductData);
     const del = document.getElementById("selection-element");
     setDele(ele.length);
     if (ele.length === 0) {
-      del.style.display = 'none';
+      del.style.display = "none";
     } else {
-      del.style.display = 'block';
+      del.style.display = "block";
     }
   };
 
@@ -184,18 +191,26 @@ const products = useSelector(selectecomproductData);
     const del = document.getElementById("selection-element");
     ele.forEach((element) => {
       dispatch(deleteProducts(element.value));
-      setTimeout(() => { toast.clearWaitingQueue(); }, 3000);
-      del.style.display = 'none';
+      setTimeout(() => {
+        toast.clearWaitingQueue();
+      }, 3000);
+      del.style.display = "none";
     });
   };
-
 
   const columns = useMemo(
     () => [
       {
         Header: "#",
         Cell: (cell) => {
-          return <input type="checkbox" className="productCheckBox form-check-input" value={cell.row.original._id} onClick={() => displayDelete()} />;
+          return (
+            <input
+              type="checkbox"
+              className="productCheckBox form-check-input"
+              value={cell.row.original._id}
+              onClick={() => displayDelete()}
+            />
+          );
         },
       },
       {
@@ -206,7 +221,11 @@ const products = useSelector(selectecomproductData);
               <div className="flex-shrink-0 me-3">
                 <div className="avatar-sm bg-light rounded p-1">
                   <img
-                    src={process.env.REACT_APP_API_URL + "/images/products/" + product.row.original.image}
+                    src={
+                      process.env.REACT_APP_API_URL +
+                      "/images/products/" +
+                      product.row.original.image
+                    }
                     alt=""
                     className="img-fluid d-block"
                   />
@@ -308,13 +327,13 @@ const products = useSelector(selectecomproductData);
         },
       },
     ],
-    []
+    [],
   );
   document.title = "Products | Velzon - React Admin & Dashboard Template";
 
   return (
     <div className="page-content">
-      <ToastContainer closeButton={false} limit={1} />
+      <ToastContainer position="top-right" />
       <DeleteModal
         show={deleteModal}
         onDeleteClick={handleDeleteOrder}
@@ -334,7 +353,7 @@ const products = useSelector(selectecomproductData);
         <Row>
           <Col xl={3} lg={4}>
             <Card>
-              <CardHeader >
+              <CardHeader>
                 <div className="d-flex mb-3">
                   <div className="flex-grow-1">
                     <h5 className="fs-16">Filters</h5>
@@ -366,14 +385,32 @@ const products = useSelector(selectecomproductData);
                     </p>
                     <ul className="list-unstyled mb-0 filter-list">
                       <li>
-                        <Link to="#" className={cate === "Kitchen Storage & Containers" ? "active d-flex py-1 align-items-center" : "d-flex py-1 align-items-center"} onClick={() => categories("Kitchen Storage & Containers")}>
+                        <Link
+                          to="#"
+                          className={
+                            cate === "Kitchen Storage & Containers"
+                              ? "active d-flex py-1 align-items-center"
+                              : "d-flex py-1 align-items-center"
+                          }
+                          onClick={() =>
+                            categories("Kitchen Storage & Containers")
+                          }
+                        >
                           <div className="flex-grow-1">
                             <h5 className="fs-13 mb-0 listname">Grocery</h5>
                           </div>
                         </Link>
                       </li>
                       <li>
-                        <Link to="#" className={cate === "Clothes" ? "active d-flex py-1 align-items-center" : "d-flex py-1 align-items-center"} onClick={() => categories("Clothes")}>
+                        <Link
+                          to="#"
+                          className={
+                            cate === "Clothes"
+                              ? "active d-flex py-1 align-items-center"
+                              : "d-flex py-1 align-items-center"
+                          }
+                          onClick={() => categories("Clothes")}
+                        >
                           <div className="flex-grow-1">
                             <h5 className="fs-13 mb-0 listname">Fashion</h5>
                           </div>
@@ -383,14 +420,30 @@ const products = useSelector(selectecomproductData);
                         </Link>
                       </li>
                       <li>
-                        <Link to="#" className={cate === "Watches" ? "active d-flex py-1 align-items-center" : "d-flex py-1 align-items-center"} onClick={() => categories("Watches")}>
+                        <Link
+                          to="#"
+                          className={
+                            cate === "Watches"
+                              ? "active d-flex py-1 align-items-center"
+                              : "d-flex py-1 align-items-center"
+                          }
+                          onClick={() => categories("Watches")}
+                        >
                           <div className="flex-grow-1">
                             <h5 className="fs-13 mb-0 listname">Watches</h5>
                           </div>
                         </Link>
                       </li>
                       <li>
-                        <Link to="#" className={cate === "electronics" ? "active d-flex py-1 align-items-center" : "d-flex py-1 align-items-center"} onClick={() => categories("electronics")}>
+                        <Link
+                          to="#"
+                          className={
+                            cate === "electronics"
+                              ? "active d-flex py-1 align-items-center"
+                              : "d-flex py-1 align-items-center"
+                          }
+                          onClick={() => categories("electronics")}
+                        >
                           <div className="flex-grow-1">
                             <h5 className="fs-13 mb-0 listname">Electronics</h5>
                           </div>
@@ -400,7 +453,15 @@ const products = useSelector(selectecomproductData);
                         </Link>
                       </li>
                       <li>
-                        <Link to="#" className={cate === "Furniture" ? "active d-flex py-1 align-items-center" : "d-flex py-1 align-items-center"} onClick={() => categories("Furniture")}>
+                        <Link
+                          to="#"
+                          className={
+                            cate === "Furniture"
+                              ? "active d-flex py-1 align-items-center"
+                              : "d-flex py-1 align-items-center"
+                          }
+                          onClick={() => categories("Furniture")}
+                        >
                           <div className="flex-grow-1">
                             <h5 className="fs-13 mb-0 listname">Furniture</h5>
                           </div>
@@ -410,14 +471,32 @@ const products = useSelector(selectecomproductData);
                         </Link>
                       </li>
                       <li>
-                        <Link to="#" className={cate === "Bike Accessories" ? "active d-flex py-1 align-items-center" : "d-flex py-1 align-items-center"} onClick={() => categories("Bike Accessories")}>
+                        <Link
+                          to="#"
+                          className={
+                            cate === "Bike Accessories"
+                              ? "active d-flex py-1 align-items-center"
+                              : "d-flex py-1 align-items-center"
+                          }
+                          onClick={() => categories("Bike Accessories")}
+                        >
                           <div className="flex-grow-1">
-                            <h5 className="fs-13 mb-0 listname">Automotive Accessories</h5>
+                            <h5 className="fs-13 mb-0 listname">
+                              Automotive Accessories
+                            </h5>
                           </div>
                         </Link>
                       </li>
                       <li>
-                        <Link to="#" className={cate === "appliances" ? "active d-flex py-1 align-items-center" : "d-flex py-1 align-items-center"} onClick={() => categories("appliances")}>
+                        <Link
+                          to="#"
+                          className={
+                            cate === "appliances"
+                              ? "active d-flex py-1 align-items-center"
+                              : "d-flex py-1 align-items-center"
+                          }
+                          onClick={() => categories("appliances")}
+                        >
                           <div className="flex-grow-1">
                             <h5 className="fs-13 mb-0 listname">Appliances</h5>
                           </div>
@@ -427,7 +506,17 @@ const products = useSelector(selectecomproductData);
                         </Link>
                       </li>
                       <li>
-                        <Link to="#" className={cate === "Bags, Wallets and Luggage" ? "active d-flex py-1 align-items-center" : "d-flex py-1 align-items-center"} onClick={() => categories("Bags, Wallets and Luggage")} >
+                        <Link
+                          to="#"
+                          className={
+                            cate === "Bags, Wallets and Luggage"
+                              ? "active d-flex py-1 align-items-center"
+                              : "d-flex py-1 align-items-center"
+                          }
+                          onClick={() =>
+                            categories("Bags, Wallets and Luggage")
+                          }
+                        >
                           <div className="flex-grow-1">
                             <h5 className="fs-13 mb-0 listname">Kids</h5>
                           </div>
@@ -451,9 +540,19 @@ const products = useSelector(selectecomproductData);
                     id="product-price-range"
                   />
                   <div className="formCost d-flex gap-2 align-items-center mt-3">
-                    <input className="form-control form-control-sm" type="text" id="minCost" readOnly />
+                    <input
+                      className="form-control form-control-sm"
+                      type="text"
+                      id="minCost"
+                      readOnly
+                    />
                     <span className="fw-semibold text-muted">to</span>
-                    <input className="form-control form-control-sm" type="text" id="maxCost" readOnly />
+                    <input
+                      className="form-control form-control-sm"
+                      type="text"
+                      id="maxCost"
+                      readOnly
+                    />
                   </div>
                 </div>
 
@@ -472,9 +571,7 @@ const products = useSelector(selectecomproductData);
                       </span>
                     </button>
                   </h2>
-                  <UncontrolledCollapse
-                    toggler="#flush-headingBrands"
-                  >
+                  <UncontrolledCollapse toggler="#flush-headingBrands">
                     <div
                       id="flush-collapseBrands"
                       className="accordion-collapse collapse show"
@@ -708,7 +805,7 @@ const products = useSelector(selectecomproductData);
                               className="form-check-input"
                               type="checkbox"
                               id="productratingRadio4"
-                              onChange={e => {
+                              onChange={(e) => {
                                 if (e.target.checked) {
                                   onChangeRating(4);
                                 } else {
@@ -735,7 +832,7 @@ const products = useSelector(selectecomproductData);
                               className="form-check-input"
                               type="checkbox"
                               id="productratingRadio3"
-                              onChange={e => {
+                              onChange={(e) => {
                                 if (e.target.checked) {
                                   onChangeRating(3);
                                 } else {
@@ -766,7 +863,7 @@ const products = useSelector(selectecomproductData);
                             <label
                               className="form-check-label"
                               htmlFor="productratingRadio2"
-                              onChange={e => {
+                              onChange={(e) => {
                                 if (e.target.checked) {
                                   onChangeRating(2);
                                 } else {
@@ -789,7 +886,7 @@ const products = useSelector(selectecomproductData);
                               className="form-check-input"
                               type="checkbox"
                               id="productratingRadio1"
-                              onChange={e => {
+                              onChange={(e) => {
                                 if (e.target.checked) {
                                   onChangeRating(1);
                                 } else {
@@ -834,7 +931,7 @@ const products = useSelector(selectecomproductData);
                           <NavLink
                             className={classnames(
                               { active: activeTab === "1" },
-                              "fw-semibold"
+                              "fw-semibold",
                             )}
                             onClick={() => {
                               toggleTab("1", "all");
@@ -851,7 +948,7 @@ const products = useSelector(selectecomproductData);
                           <NavLink
                             className={classnames(
                               { active: activeTab === "2" },
-                              "fw-semibold"
+                              "fw-semibold",
                             )}
                             onClick={() => {
                               toggleTab("2", "published");
@@ -868,7 +965,7 @@ const products = useSelector(selectecomproductData);
                           <NavLink
                             className={classnames(
                               { active: activeTab === "3" },
-                              "fw-semibold"
+                              "fw-semibold",
                             )}
                             onClick={() => {
                               toggleTab("3", "draft");
@@ -887,7 +984,9 @@ const products = useSelector(selectecomproductData);
                           <div
                             id="select-content"
                             className="text-body fw-semibold px-1"
-                          >{dele}</div>{" "}
+                          >
+                            {dele}
+                          </div>{" "}
                           Result{" "}
                           <button
                             type="button"
@@ -905,7 +1004,7 @@ const products = useSelector(selectecomproductData);
                   {productList && productList.length > 0 ? (
                     <TableContainer
                       columns={columns}
-                      data={(productList || [])}
+                      data={productList || []}
                       isGlobalFilter={true}
                       isAddUserList={false}
                       customPageSize={10}

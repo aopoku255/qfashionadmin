@@ -7,9 +7,10 @@ axios.defaults.baseURL = api.API_URL;
 axios.defaults.headers.post["Content-Type"] = "application/json";
 
 // content type
-const token = JSON.parse(sessionStorage.getItem("authUser")) ? JSON.parse(sessionStorage.getItem("authUser")).token : null;
-if(token)
-axios.defaults.headers.common["Authorization"] = "Bearer " + token;
+const token = JSON.parse(sessionStorage.getItem("authUser"))
+  ? JSON.parse(sessionStorage.getItem("authUser")).token
+  : null;
+if (token) axios.defaults.headers.common["Authorization"] = "Bearer " + token;
 
 // intercepting to capture errors
 axios.interceptors.response.use(
@@ -19,9 +20,10 @@ axios.interceptors.response.use(
   function (error) {
     // Any status codes that falls outside the range of 2xx cause this function to trigger
     let message;
-    switch (error.status) {
+    const status = error?.response?.status;
+    switch (status) {
       case 500:
-        message = "Internal Server Error";
+        message = error || "Internal Server Error";
         break;
       case 401:
         message = "Invalid credentials";
@@ -33,7 +35,7 @@ axios.interceptors.response.use(
         message = error.message || error;
     }
     return Promise.reject(message);
-  }
+  },
 );
 /**
  * Sets the default authorization
@@ -57,12 +59,13 @@ class APIClient {
     let paramKeys = [];
 
     if (params) {
-      Object.keys(params).map(key => {
-        paramKeys.push(key + '=' + params[key]);
+      Object.keys(params).map((key) => {
+        paramKeys.push(key + "=" + params[key]);
         return paramKeys;
       });
 
-      const queryString = paramKeys && paramKeys.length ? paramKeys.join('&') : "";
+      const queryString =
+        paramKeys && paramKeys.length ? paramKeys.join("&") : "";
       response = axios.get(`${url}?${queryString}`, params);
     } else {
       response = axios.get(`${url}`, params);
@@ -74,8 +77,15 @@ class APIClient {
    * post given data to url
    */
   create = (url, data) => {
-    return axios.post(url, data);
+    const isFormData = data instanceof FormData;
+
+    return axios.post(url, data, {
+      headers: isFormData
+        ? { "Content-Type": "multipart/form-data" }
+        : undefined,
+    });
   };
+
   /**
    * Updates data
    */

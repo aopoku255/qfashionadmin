@@ -55,7 +55,11 @@ const EcommerceSlice = createSlice({
     });
 
     builder.addCase(addNewCategory.fulfilled, (state, action) => {
-      state.categories.push(action.payload);
+      state.categories.push(action.payload.category);
+    });
+
+    builder.addCase(addNewCategory.rejected, (state, action) => {
+      state.error = action.payload || null;
     });
 
     builder.addCase(addNewProduct.rejected, (state, action) => {

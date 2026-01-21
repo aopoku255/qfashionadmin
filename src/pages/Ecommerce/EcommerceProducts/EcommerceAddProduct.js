@@ -50,6 +50,7 @@ import {
   removeVariation,
   setVariations,
 } from "../../../slices/ecommerce/reducer";
+import { toast, ToastContainer } from "react-toastify";
 
 // Register the plugins
 registerPlugin(FilePondPluginImageExifOrientation, FilePondPluginImagePreview);
@@ -204,7 +205,7 @@ const EcommerceAddProduct = (props) => {
       name: "",
       slug: "",
       price: "",
-      stock: "",
+      stock: 0,
       color: "",
       size: "",
       icon: "",
@@ -229,7 +230,6 @@ const EcommerceAddProduct = (props) => {
       category: Yup.string().required("Please Enter a Product category"),
       meta_title: Yup.string().required("Please Enter a Meta Title"),
       meta_keyword: Yup.string().required("Please Enter a Meta Keyword"),
-      // categoryName: Yup.string().required("Please Enter a Cat"),
     }),
 
     onSubmit: (values) => {
@@ -244,18 +244,37 @@ const EcommerceAddProduct = (props) => {
         discount: values.product_discount,
         meta_title: values.meta_title,
         meta_keyword: values.meta_keyword,
-        categoryName: values.categoryName,
-        categorySlug: values.categorySlug,
-        categoryIcon: values.categoryIcon,
         description: values.description,
         files: values.gallery,
         variations: ProductsVariations,
       };
+
+      const formData = new FormData();
+
+      // text fields
+      formData.append("name", newProduct.name);
+      formData.append("slug", newProduct.slug);
+      formData.append("price", newProduct.price);
+      formData.append("stock", newProduct.stock);
+      formData.append("categoryId", newProduct.category);
+      formData.append("status", newProduct.status);
+      formData.append("isFeatured", newProduct.isFeatured);
+      formData.append("brand", newProduct.brand);
+      formData.append("discount", newProduct.discount);
+      formData.append("meta_title", newProduct.meta_title);
+      formData.append("meta_keyword", newProduct.meta_keyword);
+      formData.append("variants", JSON.stringify(newProduct.variations));
+
+      // ✅ description from CKEditor/Formik
+      formData.append("description", newProduct.description);
+
+      // ✅ gallery from Dropzone state
+      selectedFiles.forEach((file) => {
+        formData.append("images", file);
+      });
+
       // save new product
-      dispatch(onAddNewProduct(newProduct));
-      // history("/apps-ecommerce-products");
-      console.log(newProduct);
-      // validation.resetForm();
+      dispatch(onAddNewProduct(formData));
     },
   });
 
@@ -341,11 +360,23 @@ const EcommerceAddProduct = (props) => {
       icon: validation.values.categoryIcon,
     };
 
-    dispatch(addNewCategory(category));
+    dispatch(addNewCategory(category))
+      .unwrap()
+      .then(() => {
+        setIsOpenCategories(false);
+        // reset category fields
+        validation.setFieldValue("categoryName", "");
+        validation.setFieldValue("categorySlug", "");
+        validation.setFieldValue("categoryIcon", "");
+      })
+      .catch(() => {
+        setIsOpenCategories(true);
+      });
   };
 
   return (
     <div className="page-content">
+      <ToastContainer position="top-right" />
       <Container fluid>
         <BreadCrumb title="Create Product" pageTitle="Ecommerce" />
 

@@ -128,8 +128,8 @@ export const addNewCategory = createAsyncThunk(
       toast.success("Category Added Successfully", { autoClose: 3000 });
       return data;
     } catch (error) {
-      toast.error("Product Added Failed", { autoClose: 3000 });
-      return error;
+      toast.error("Category Added Failed", { autoClose: 3000 });
+      return rejectWithValue(error);
     }
   },
 );

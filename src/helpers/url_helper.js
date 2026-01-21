@@ -36,7 +36,7 @@ export const DELETE_MAIL = "/delete/mail";
 // Product
 export const GET_PRODUCTS = "/apps/product";
 export const DELETE_PRODUCT = "/apps/product";
-export const ADD_NEW_PRODUCT = "/apps/product";
+export const ADD_NEW_PRODUCT = "/products/create-product";
 export const ADD_NEW_CATEGORY = "/category/create";
 export const UPDATE_PRODUCT = "/apps/product";
 

@@ -9,5 +9,6 @@ module.exports = {
   },
   api: {
     API_URL: "http://localhost:8081/api",
+    // API_URL: "https://api-node.themesbrand.website",
   },
 };

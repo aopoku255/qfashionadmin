@@ -5,6 +5,7 @@ import "react-toastify/dist/ReactToastify.css";
 //Include Both Helper File with needed methods
 import {
   getProducts as getProductsApi,
+  getCategory as getCategoryApi,
   deleteProducts as deleteProductsApi,
   getOrders as getOrdersApi,
   getSellers as getSellersApi,
@@ -25,6 +26,18 @@ export const getProducts = createAsyncThunk(
   async () => {
     try {
       const response = getProductsApi();
+      return response;
+    } catch (error) {
+      return error;
+    }
+  },
+);
+
+export const getCategory = createAsyncThunk(
+  "ecommerce/getCategory",
+  async () => {
+    try {
+      const response = getCategoryApi();
       return response;
     } catch (error) {
       return error;

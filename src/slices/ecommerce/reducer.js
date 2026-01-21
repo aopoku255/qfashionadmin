@@ -13,6 +13,8 @@ import {
   updateCustomer,
   deleteCustomer,
   getSellers,
+  getCategory,
+  addNewCategory,
 } from "./thunk";
 export const initialState = {
   products: [],
@@ -21,6 +23,7 @@ export const initialState = {
   customers: [],
   error: {},
   variations: [],
+  categories: [],
 };
 
 const EcommerceSlice = createSlice({
@@ -39,6 +42,9 @@ const EcommerceSlice = createSlice({
     builder.addCase(getProducts.fulfilled, (state, action) => {
       state.products = action.payload.data;
     });
+    builder.addCase(getCategory.fulfilled, (state, action) => {
+      state.categories = action.payload.data;
+    });
 
     builder.addCase(getProducts.rejected, (state, action) => {
       state.error = action.payload.error || null;
@@ -46,6 +52,10 @@ const EcommerceSlice = createSlice({
 
     builder.addCase(addNewProduct.fulfilled, (state, action) => {
       state.products.push(action.payload);
+    });
+
+    builder.addCase(addNewCategory.fulfilled, (state, action) => {
+      state.categories.push(action.payload);
     });
 
     builder.addCase(addNewProduct.rejected, (state, action) => {

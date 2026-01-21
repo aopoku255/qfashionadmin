@@ -75,6 +75,7 @@ export const getEvents = () => api.get(url.GET_EVENTS);
 
 // get Events
 export const getCategories = () => api.get(url.GET_CATEGORIES);
+export const getCategory = () => api.get(url.GET_CATEGORY);
 
 // get Upcomming Events
 export const getUpCommingEvent = () => api.get(url.GET_UPCOMMINGEVENT);

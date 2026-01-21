@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import BreadCrumb from "../../../Components/Common/BreadCrumb";
 import {
   Card,
@@ -21,7 +21,11 @@ import {
 
 // Redux
 import { useDispatch, useSelector } from "react-redux";
-import { addNewCategory, addNewProduct as onAddNewProduct } from "../../../slices/thunks";
+import {
+  addNewCategory,
+  getCategory,
+  addNewProduct as onAddNewProduct,
+} from "../../../slices/thunks";
 
 import { CKEditor } from "@ckeditor/ckeditor5-react";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
@@ -93,20 +97,27 @@ const EcommerceAddProduct = (props) => {
     return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + " " + sizes[i];
   }
 
-  const productCategory = [
-    {
-      options: [
-        { label: "All", value: "All" },
-        { label: "Appliances", value: "Kitchen Storage & Containers" },
-        { label: "Fashion", value: "Clothes" },
-        { label: "Electronics", value: "Electronics" },
-        { label: "Grocery", value: "Grocery" },
-        { label: "Home & Furniture", value: "Furniture" },
-        { label: "Kids", value: "Kids" },
-        { label: "Mobiles", value: "Mobiles" },
-      ],
-    },
-  ];
+  // const productCategory = [
+  //   {
+  //     options: [
+  //       { label: "All", value: "All" },
+  //       { label: "Appliances", value: "Kitchen Storage & Containers" },
+  //       { label: "Fashion", value: "Clothes" },
+  //       { label: "Electronics", value: "Electronics" },
+  //       { label: "Grocery", value: "Grocery" },
+  //       { label: "Home & Furniture", value: "Furniture" },
+  //       { label: "Kids", value: "Kids" },
+  //       { label: "Mobiles", value: "Mobiles" },
+  //     ],
+  //   },
+  // ];
+
+  useEffect(() => {
+    dispatch(getCategory());
+  }, [dispatch]);
+
+  const productCategory =
+    useSelector((state) => state.Ecommerce?.categories) || [];
 
   const dateFormat = () => {
     let d = new Date(),
@@ -218,6 +229,7 @@ const EcommerceAddProduct = (props) => {
       category: Yup.string().required("Please Enter a Product category"),
       meta_title: Yup.string().required("Please Enter a Meta Title"),
       meta_keyword: Yup.string().required("Please Enter a Meta Keyword"),
+      // categoryName: Yup.string().required("Please Enter a Cat"),
     }),
 
     onSubmit: (values) => {
@@ -323,13 +335,13 @@ const EcommerceAddProduct = (props) => {
 
     if (errors.categoryName) return;
 
-    const variation = {
+    const category = {
       name: validation.values.categoryName,
-      slug: validation.values.slug,
-      icon: validation.values.icon,
+      slug: validation.values.categorySlug,
+      icon: validation.values.categoryIcon,
     };
 
-    dispatch(addNewCategory(variation))
+    dispatch(addNewCategory(category));
   };
 
   return (
@@ -1127,18 +1139,16 @@ const EcommerceAddProduct = (props) => {
                   name="category"
                   type="select"
                   className="form-select"
-                  id="category-field"
+                  id="category"
                   onChange={validation.handleChange}
                   onBlur={validation.handleBlur}
                   value={validation.values.category || ""}
                 >
                   {productCategory.map((item, key) => (
                     <React.Fragment key={key}>
-                      {item.options.map((item, key) => (
-                        <option value={item.value} key={key}>
-                          {item.label}
-                        </option>
-                      ))}
+                      <option value={item.id} key={key}>
+                        {item.name}
+                      </option>
                     </React.Fragment>
                   ))}
                 </Input>
@@ -1153,7 +1163,11 @@ const EcommerceAddProduct = (props) => {
                 toggle={handleOpenCategories}
                 centered
               >
-                <form action="" className="px-4 py-4">
+                <form
+                  action=""
+                  className="px-4 py-4"
+                  onSubmit={handleAddCategories}
+                >
                   <div className="mb-3">
                     <Label className="form-label" htmlFor="meta-keywords-input">
                       Name
